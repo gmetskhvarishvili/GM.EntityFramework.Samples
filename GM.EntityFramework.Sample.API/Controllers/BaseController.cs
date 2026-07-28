@@ -5,8 +5,6 @@ namespace GM.EntityFramework.Sample.API.Controllers;
 
 public class BaseController : ControllerBase
 {
-    private IMediator? _mediator;
-
     protected IMediator Mediator =>
-        _mediator ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
+        field ??= HttpContext.RequestServices.GetRequiredService<IMediator>();
 }
