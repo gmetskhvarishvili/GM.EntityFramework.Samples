@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="icon.png" alt="GM.EntityFramework Samples" width="140" height="140" />
+</p>
+
 # GM.EntityFramework Samples
 
 [![CI](https://github.com/gmetskhvarishvili/GM.EntityFramework.Samples/actions/workflows/ci.yml/badge.svg)](https://github.com/gmetskhvarishvili/GM.EntityFramework.Samples/actions/workflows/ci.yml)
