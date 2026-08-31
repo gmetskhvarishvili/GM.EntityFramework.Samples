@@ -29,7 +29,7 @@ public class QueryHandlerTests
 
         Assert.Equal("Widget", details.Name);
         Assert.NotNull(details.SampleItems);
-        Assert.Single(details.SampleItems!);
+        Assert.Single(details.SampleItems);
     }
 
     [Fact]

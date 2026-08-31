@@ -46,10 +46,10 @@ public class
             AddCriteria(s => s.Id == id.Value);
 
         if (!string.IsNullOrWhiteSpace(name))
-            AddCriteria(s => s.Name!.Contains(name));
+            AddCriteria(s => s.Name.Contains(name));
 
         if (!string.IsNullOrWhiteSpace(description))
-            AddCriteria(s => s.Description!.Contains(description));
+            AddCriteria(s => s.Description.Contains(description));
         
         
     }
