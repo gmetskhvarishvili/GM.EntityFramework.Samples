@@ -5,7 +5,7 @@ namespace GM.EntityFramework.Sample.Persistence.Context;
 
 public class ApplicationDbContext: GenericDbContext
 {
-    public const string DEFAULT_SCHEMA = "application";
+    public const string DefaultSchema = "application";
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
         : base(options)
