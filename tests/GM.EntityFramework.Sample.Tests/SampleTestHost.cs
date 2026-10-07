@@ -1,8 +1,10 @@
+using GM.EntityFramework.Persistence;
 using GM.EntityFramework.Sample.Domain.SeedWork;
 using GM.EntityFramework.Sample.Persistence.Context;
 using GM.EntityFramework.Sample.Persistence.Repositories;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using PersistenceUnitOfWork = GM.EntityFramework.Sample.Persistence.UnitOfWork.UnitOfWork;
 
 namespace GM.EntityFramework.Sample.Tests;
@@ -16,6 +18,10 @@ public sealed class SampleTestHost : IDisposable
 {
     private readonly SqliteConnection _connection;
 
+    // Empty provider: AddGMActorAuditing falls back to the anonymous actor + system clock, which is
+    // all the sample needs to stamp CreatedAt/UpdatedAt in tests.
+    private static readonly IServiceProvider AuditingServices = new ServiceCollection().BuildServiceProvider();
+
     public SampleTestHost()
     {
         _connection = new SqliteConnection("DataSource=:memory:");
@@ -27,10 +33,10 @@ public sealed class SampleTestHost : IDisposable
 
     private ApplicationDbContext CreateContext()
     {
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)
-            .Options;
-        return new ApplicationDbContext(options);
+        var builder = new DbContextOptionsBuilder<ApplicationDbContext>()
+            .UseSqlite(_connection);
+        builder.AddGMActorAuditing(AuditingServices);
+        return new ApplicationDbContext(builder.Options);
     }
 
     /// <summary>Runs a command/query handler in its own scope and returns the result.</summary>

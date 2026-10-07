@@ -1,3 +1,4 @@
+using GM.EntityFramework.Persistence;
 using GM.EntityFramework.Sample.Domain.BoundedContext.SampleBoundedContext.SampleAggregate;
 using GM.EntityFramework.Sample.Domain.SeedWork;
 using GM.EntityFramework.Sample.Persistence.Context;
@@ -23,6 +24,7 @@ public static class DependencyInjection
                         o.CommandTimeout(60);
                     });
                 options.UseInternalServiceProvider(serviceProvider);
+                options.AddGMActorAuditing(serviceProvider);
             });
 
             services.AddTransient<ISampleRepository, SampleRepository>();
