@@ -23,8 +23,15 @@ dispatching commands and queries. Targets **.NET 10**, backed by **PostgreSQL**.
 - A **`UnitOfWork : GenericUnitOfWork<ApplicationDbContext>`** exposing the aggregate repository.
 - **CQRS** with GM.Mediator: `CreateSample` / `UpdateSample` / `DeleteSample` commands and
   `GetSampleDetails` / `GetSamplesList` queries — the controllers just `Mediator.Send(...)`.
-- The **specification pattern** (`GetSamplesList` builds a `BaseSpecification` with a visibility
-  filter and optional criteria).
+- The **specification pattern** — `SampleSpecification` (Domain) applies the visibility scope,
+  optional criteria and `ApplyListQuery(dateRange, paging, ordering)`; the `GetSamplesList` handler
+  builds one for the count and one for the page.
+- **List queries** — `GetSamplesListQuery` carries its filters plus paging, `OrderBy`, `Visibility`
+  and the audit date range; the handler maps them to `PagingOptions<string>` / `OrderingOptions` /
+  `AuditDateRange` and returns a `SamplesListDto` (items + paging fields).
+- **Paging by page number or by last key value** — send `LastKeyValue` for the samples after that value of
+  `LastKeyProperty` (`Id` by default) or `CurrentPage` for that page by number (in `OrderBy` order); the
+  total count is returned unless `IncludeTotalCount=false`.
 - **Soft delete** — `DeleteSample` calls `SoftRemove()`, and queries filter out inactive/hidden/
   deleted rows.
 
@@ -73,8 +80,15 @@ Persistence implements Domain; the API wires everything together.
 | `POST` | `/Sample/AddSample` | Create a sample (+ optional items); returns the new id |
 | `PUT` | `/Sample/UpdateSample` | Update name/description |
 | `DELETE` | `/Sample/DeleteSample?Id=` | Soft-delete a sample |
-| `GET` | `/Sample/GetSamplesList` | List samples (optional id/name/description filter) |
+| `GET` | `/Sample/GetSamplesList?LastKeyProperty=&LastKeyValue=&OrderBy=&PageSize=` | Samples after the row with that key, in `OrderBy` order (optional id/name/description, visibility and audit-date filters) |
+| `GET` | `/Sample/GetSamplesList?CurrentPage=&PageSize=&OrderBy=` | Page of samples by number |
 | `GET` | `/Sample/GetSampleDetails?Id=` | Get a sample with its items |
+
+`GetSamplesList` returns the page's samples as the body and the paging metadata in an
+`X-Pagination` header: `totalCount`, `pageSize`, `currentPage` (null when paging by `LastKeyValue`),
+`totalPages`, `lastKeyProperty` + `lastKeyValue` (send them back as `LastKeyProperty` / `LastKeyValue` for
+the next page) and `hasMore`. The total is counted by default; send `IncludeTotalCount=false` to skip that
+query (`totalCount`/`totalPages` are then null).
 
 ## Testing
 
