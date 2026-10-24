@@ -8,7 +8,7 @@ public class SampleItemConfiguration
 {
     public void Configure(EntityTypeBuilder<Domain.BoundedContext.SampleBoundedContext.SampleAggregate.SampleItem> builder)
     {
-        builder.ToTable("SampleItem", "sample");
+        builder.ToTable("sample_item", "sample");
 
         builder.HasKey(e => e.Id);
         builder.HasIndex(e => e.Id);

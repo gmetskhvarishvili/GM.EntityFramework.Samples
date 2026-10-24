@@ -34,7 +34,8 @@ public sealed class SampleTestHost : IDisposable
     private ApplicationDbContext CreateContext()
     {
         var builder = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection);
+            .UseSqlite(_connection)
+            .UseSnakeCaseNamingConvention(); // same naming as the app
         builder.AddGMActorAuditing(AuditingServices);
         return new ApplicationDbContext(builder.Options);
     }

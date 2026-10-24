@@ -45,7 +45,9 @@ public abstract class DesignTimeDbContextFactoryBase<TContext> :
 
         var optionsBuilder = new DbContextOptionsBuilder<TContext>();
 
-        optionsBuilder.UseNpgsql(connectionString);
+        // Must match the runtime options (DependencyInjection), or migrations are generated for a different model:
+        // snake_case names at runtime, PascalCase in the migrations.
+        optionsBuilder.UseNpgsql(connectionString).UseSnakeCaseNamingConvention();
 
         return CreateNewInstance(optionsBuilder.Options);
     }
